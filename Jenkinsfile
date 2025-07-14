@@ -37,6 +37,25 @@ pipeline {
                 script {
                     sh "docker rm -f ${APP_CONTAINER_NAME} || true"
                     sh "docker run -d --name ${APP_CONTAINER_NAME} -p 5000:5000 ${DOCKER_IMAGE}"
+                    // подождать, пока контейнер стартует
+                    sleep(time: 5, unit: 'SECONDS')
+                }
+            }
+        }
+
+        stage('Test Application') {
+            steps {
+                script {
+                    // Пример простого теста с curl
+                    sh """
+                        STATUS_CODE=\$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/)
+                        if [ "\$STATUS_CODE" -ne 200 ]; then
+                            echo "Application test failed with status \$STATUS_CODE"
+                            exit 1
+                        else
+                            echo "Application responded successfully with HTTP 200"
+                        fi
+                    """
                 }
             }
         }
