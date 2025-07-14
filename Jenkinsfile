@@ -18,6 +18,7 @@ pipeline {
             steps {
                 script {
                     docker.image('python:3.10').inside('-u root') {
+                        sh 'pip install -r requirements.txt'
                         sh 'flake8 .'
                     }
                 }
@@ -28,6 +29,7 @@ pipeline {
             steps {
                 script {
                     docker.image('python:3.10').inside('-u root') {
+                        sh 'pip install -r requirements.txt
                         sh 'pytest tests'
                     }
                 }
