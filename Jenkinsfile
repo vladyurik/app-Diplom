@@ -16,7 +16,7 @@ pipeline {
         stage('Lint & Test') {
             steps {
                 script {
-                    docker.image('python:3.10').inside {
+                    docker.image('python:3.10').inside('-u root') {
                         sh 'pip install flake8 pytest'
                         sh 'flake8 .'
                         sh 'pytest'
