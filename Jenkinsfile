@@ -18,7 +18,6 @@ pipeline {
             steps {
                 script {
                     docker.image('python:3.10').inside('-u root') {
-                        sh 'pip install flake8'
                         sh 'flake8 .'
                     }
                 }
@@ -29,7 +28,6 @@ pipeline {
             steps {
                 script {
                     docker.image('python:3.10').inside('-u root') {
-                        sh 'pip install pytest'
                         sh 'pytest tests'
                     }
                 }
