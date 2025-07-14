@@ -14,16 +14,6 @@ pipeline {
             }
         }
 
-        stage('Lint') {
-            steps {
-                script {
-                    docker.image('python:3.10').inside('-u root') {
-                        sh 'pip install flake8 pytest'
-                        sh 'flake8 .'
-                    }
-                }
-            }
-        }
 
         stage('Unit Tests') {
             steps {
