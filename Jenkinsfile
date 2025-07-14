@@ -4,7 +4,6 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'flask-calculator:latest'
         APP_CONTAINER_NAME = 'flask_calculator_app'
-        TEST_CONTAINER_NAME = 'flask_calculator_test'
     }
 
     stages {
@@ -14,60 +13,36 @@ pipeline {
             }
         }
 
-
-        stage('Lint') {
+        stage('Lint Code') {
             steps {
                 script {
-                    docker.image('python:3.10').inside('-u root') {
-                        sh 'pip install flake8'
-                        sh 'flake8 .'
-                    }
+                    sh 'pip install flake8'
+                    sh 'flake8 .'
+                }
+            }
+        }
+
+        stage('Run Unit Tests') {
+            steps {
+                script {
+                    sh 'pip install -r requirements.txt || true' // если есть
+                    sh 'pip install pytest'
+                    sh 'pytest'
                 }
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${DOCKER_IMAGE} ."
-            }
-        }
-
-
-        
-        stage('Run Container for Testing') {
-            steps {
                 script {
-                    // Запуск временного тестового контейнера
-                    sh "docker rm -f flask_calculator_test || true"
-                    sh "docker run -d --rm --name ${TEST_CONTAINER_NAME} -p 5001:5000 ${DOCKER_IMAGE}"
-                    sleep time: 5, unit: 'SECONDS' // Подождать пока поднимется
+                    sh "docker build -t ${DOCKER_IMAGE} ."
                 }
             }
         }
 
-        stage('Integration Tests') {
+        stage('Deploy Application') {
             steps {
                 script {
-                    docker.image('python:3.10').inside('-u root') {
-                        sh 'pip install requests pytest'
-                        sh 'pytest tests/test_endpoints.py'
-                    }
-                }
-            }
-        }
-
-        stage('Cleanup Test Container') {
-            steps {
-                script {
-                    sh "docker stop ${TEST_CONTAINER_NAME} || true"
-                }
-            }
-        }
-
-        stage('Restart for Deployment') {
-            steps {
-                script {
-                    sh "docker stop ${APP_CONTAINER_NAME} || true"
                     sh "docker rm -f ${APP_CONTAINER_NAME} || true"
                     sh "docker run -d --name ${APP_CONTAINER_NAME} -p 5000:5000 ${DOCKER_IMAGE}"
                 }
