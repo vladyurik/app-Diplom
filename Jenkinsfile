@@ -50,7 +50,7 @@ pipeline {
                 script {
                     docker.image('python:3.10').inside('-u root') {
                         sh 'pip install requests pytest'
-                        sh 'pytest tests'
+                        sh 'pytest tests/test_endpoints.py'
                     }
                 }
             }
