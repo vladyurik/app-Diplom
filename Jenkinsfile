@@ -13,21 +13,14 @@ pipeline {
             }
         }
 
-        stage('Lint Code') {
+        stage('Lint & Test') {
             steps {
                 script {
-                    sh 'pip install flake8'
-                    sh 'flake8 .'
-                }
-            }
-        }
-
-        stage('Run Unit Tests') {
-            steps {
-                script {
-                    sh 'pip install -r requirements.txt || true' // если есть
-                    sh 'pip install pytest'
-                    sh 'pytest'
+                    docker.image('python:3.10').inside {
+                        sh 'pip install flake8 pytest'
+                        sh 'flake8 .'
+                        sh 'pytest'
+                    }
                 }
             }
         }
