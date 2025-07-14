@@ -15,11 +15,13 @@ pipeline {
         }
 
 
-        stage('Lint Code') {
+        stage('Lint') {
             steps {
                 script {
-                    sh 'pip install flake8'
-                    sh 'flake8 .'
+                    docker.image('python:3.10').inside('-u root') {
+                        sh 'pip install flake8'
+                        sh 'flake8 .'
+                    }
                 }
             }
         }
