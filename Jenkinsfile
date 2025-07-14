@@ -58,7 +58,7 @@ pipeline {
             }
         }
 
-        stage('Test Application') {
+        stage('Archive HTML Response') {
             steps {
                 script {
                    sh """
