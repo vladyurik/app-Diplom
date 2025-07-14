@@ -30,7 +30,7 @@ pipeline {
                 script {
                     docker.image('python:3.10').inside('-u root') {
                         sh 'pip install pytest'
-                        sh 'pytest tests/unit'
+                        sh 'pytest tests'
                     }
                 }
             }
