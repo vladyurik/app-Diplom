@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Калькулятор на Flask</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 50px; }
+        input, select { padding: 8px; margin: 5px; font-size: 16px; }
+        button { padding: 8px 15px; font-size: 16px; }
+        .result { margin-top: 20px; font-weight: bold; }
+        .error { color: red; margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Калькулятор</h1>
+    <form method="post">
+        <input type="number" step="any" name="a" required placeholder="Число A" />
+        <select name="op" required>
+            <option value="add">+</option>
+            <option value="sub">-</option>
+            <option value="mul">*</option>
+            <option value="div">/</option>
+        </select>
+        <input type="number" step="any" name="b" required placeholder="Число B" />
+        <button type="submit">Вычислить</button>
+    </form>
+
+    {% if result is not none %}
+        <div class="result">Результат: {{ result }}</div>
+    {% endif %}
+
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+</body>
+</html>
