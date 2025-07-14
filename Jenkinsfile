@@ -13,13 +13,12 @@ pipeline {
             }
         }
 
-        stage('Lint & Test') {
+        stage('Lint') {
             steps {
                 script {
                     docker.image('python:3.10').inside('-u root') {
-                        sh 'pip install flake8 pytest'
+                        sh 'pip install flake8'
                         sh 'flake8 .'
-                        sh 'pytest'
                     }
                 }
             }
@@ -27,20 +26,39 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
+                sh "docker build -t ${DOCKER_IMAGE} ."
+            }
+        }
+
+        stage('Run Container for Testing') {
+            steps {
                 script {
-                    sh "docker build -t ${DOCKER_IMAGE} ."
+                    sh "docker rm -f ${APP_CONTAINER_NAME} || true"
+                    sh "docker run -d --name ${APP_CONTAINER_NAME} -p 5000:5000 ${DOCKER_IMAGE}"
+                    sh "sleep 3" // немного подождать, чтобы приложение запустилось
                 }
             }
         }
 
-        stage('Deploy Application') {
+        stage('Run Integration Tests') {
             steps {
                 script {
-                    sh "docker rm -f ${APP_CONTAINER_NAME} || true"
+                    docker.image('python:3.10').inside('-u root') {
+                        sh 'pip install pytest requests'
+                        sh 'pytest tests/'
+                    }
+                }
+            }
+        }
+
+        stage('Restart for Deployment') {
+            steps {
+                script {
+                    sh "docker stop ${APP_CONTAINER_NAME}"
+                    sh "docker rm -f ${APP_CONTAINER_NAME}"
                     sh "docker run -d --name ${APP_CONTAINER_NAME} -p 5000:5000 ${DOCKER_IMAGE}"
                 }
             }
         }
     }
 }
-
