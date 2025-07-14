@@ -71,7 +71,7 @@ pipeline {
                    archiveArtifacts artifacts: 'response.html', fingerprint: true
                 }
             }
-    }
+        }
         
     }
 }
