@@ -32,10 +32,13 @@ pipeline {
             }
         }
 
+
+        
         stage('Run Container for Testing') {
             steps {
                 script {
                     // Запуск временного тестового контейнера
+                    sh "docker rm -f flask_calculator_test || true"
                     sh "docker run -d --rm --name ${TEST_CONTAINER_NAME} -p 5001:5000 ${DOCKER_IMAGE}"
                     sleep time: 5, unit: 'SECONDS' // Подождать пока поднимется
                 }
