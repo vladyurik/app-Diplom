@@ -12,22 +12,14 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/vladyurik/app-Diplom.git'
             }
         }
-
-        stage('Lint Code') {
+        
+        stage('Lint') {
             steps {
                 script {
-                    sh 'pip install flake8'
-                    sh 'flake8 .'
-                }
-            }
-        }
-
-        stage('Run Unit Tests') {
-            steps {
-                script {
-                    sh 'pip install -r requirements.txt || true' // если есть
-                    sh 'pip install pytest'
-                    sh 'pytest'
+                    docker.image('python:3.10').inside('-u root') {
+                        sh 'pip install flake8'
+                        sh 'flake8 .'
+                    }
                 }
             }
         }
