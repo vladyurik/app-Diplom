@@ -46,15 +46,13 @@ pipeline {
         stage('Test Application') {
             steps {
                 script {
-                    // Пример простого теста с curl
                     sh """
-                        STATUS_CODE=\$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/)
-                        if [ "\$STATUS_CODE" -ne 200 ]; then
-                            echo "Application test failed with status \$STATUS_CODE"
-                            exit 1
-                        else
-                            echo "Application responded successfully with HTTP 200"
-                        fi
+                        docker exec ${APP_CONTAINER_NAME} sh -c 'apk add --no-cache curl || apt-get update && apt-get install -y curl'
+                        docker exec ${APP_CONTAINER_NAME} sh -c '
+                            STATUS_CODE=\$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/)
+                            echo "Status code: \$STATUS_CODE"
+                            [ "\$STATUS_CODE" -ne 200 ] && exit 1 || exit 0
+                        '
                     """
                 }
             }
