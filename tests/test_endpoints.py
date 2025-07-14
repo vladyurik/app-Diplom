@@ -8,6 +8,9 @@ def test_homepage_accessible():
 
 
 def test_addition():
-    response = requests.post('http://localhost:5000/', data={'a': '2', 'b': '3', 'op': 'add'})
+    response = requests.post(
+        'http://localhost:5000/',
+        data={'a': '2', 'b': '3', 'op': 'add'}
+    )
     assert response.status_code == 200
     assert '5' in response.text
