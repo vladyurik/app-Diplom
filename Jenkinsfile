@@ -18,7 +18,7 @@ pipeline {
             steps {
                 script {
                     docker.image('python:3.10').inside('-u root') {
-                        sh 'pip install -r flake8 pytest'
+                        sh 'pip install flake8 pytest'
                         sh 'flake8 .'
                     }
                 }
