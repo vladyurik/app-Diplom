@@ -57,5 +57,21 @@ pipeline {
                 }
             }
         }
+
+        stage('Test Application') {
+            steps {
+                script {
+                   sh """
+                       docker exec ${APP_CONTAINER_NAME} sh -c 'apk add --no-cache curl || apt-get update && apt-get install -y curl'
+                       docker exec ${APP_CONTAINER_NAME} sh -c '
+                           curl -s http://localhost:5000/ > /response.html
+                       '
+                       docker cp ${APP_CONTAINER_NAME}:/response.html response.html
+                   """
+                   archiveArtifacts artifacts: 'response.html', fingerprint: true
+                }
+            }
+    }
+        
     }
 }
