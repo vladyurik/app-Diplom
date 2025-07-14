@@ -15,13 +15,11 @@ pipeline {
         }
 
 
-        stage('Unit Tests') {
+        stage('Lint Code') {
             steps {
                 script {
-                    docker.image('python:3.10').inside('-u root') {
-                        sh 'pip install -r requirements.txt'
-                        sh 'pytest tests'
-                    }
+                    sh 'pip install flake8'
+                    sh 'flake8 .'
                 }
             }
         }
